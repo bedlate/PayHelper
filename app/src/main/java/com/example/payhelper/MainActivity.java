@@ -5,6 +5,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.payhelper.databinding.ActivityMainBinding;
 import com.example.payhelper.model.ConfigModel;
@@ -22,5 +24,16 @@ public class MainActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setConfig(configModel);
         binding.setLifecycleOwner(this);
+
+        binding.button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), getHookStatus(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public String getHookStatus() {
+        return "未被劫持";
     }
 }

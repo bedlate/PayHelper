@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PayHelper</string>
+    <string name="app_name">支付助手</string>
     <string name="save_text">保存配置</string>
     <string name="api_value"></string>
     <string name="api_label">API地址</string>
