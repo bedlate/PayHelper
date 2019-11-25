@@ -1,14 +1,15 @@
 <resources>
     <string name="app_name">PayHelper</string>
     <string name="save_text">保存配置</string>
-    <string name="api_value"></string>
     <string name="api_label">API地址</string>
     <string name="api_hint">请输入API地址</string>
     <string name="api_key">api</string>
     <string name="api_default_value">http://localhost</string>
-    <string name="username_value"></string>
     <string name="username_label">用户名</string>
     <string name="username_hint">请输入用户名</string>
     <string name="username_key">username</string>
     <string name="username_default_value"></string>
+    <string name="sms_enable_text">启用短信监控</string>
+    <string name="sms_enable_key">sms_enable</string>
+    <bool name="sms_enable_default_value">false</bool>
 </resources>

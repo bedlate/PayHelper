@@ -15,12 +15,14 @@ import com.example.payhelper.R;
 public class ConfigModel extends AndroidViewModel {
 
     private MutableLiveData<String> api, username;
+    private MutableLiveData<Boolean> smsEnable;
 
     private final String TAG = "config";
     private final String CONFIG_FILE = "config";
 
     private Application application;
-    private String api_key, api_default_value, username_key, username_default_value;
+    private String apiKey, apiDefaultValue, usernameKey, usernameDefaultValue, smsEnableKey;
+    private Boolean smsEnableDefaultValue;
 
     public ConfigModel(@NonNull Application application) {
         super(application);
@@ -28,10 +30,18 @@ public class ConfigModel extends AndroidViewModel {
         Resources resources = application.getResources();
 
         this.application = application;
-        this.api_key = resources.getString(R.string.api_key);
-        this.api_default_value = resources.getString(R.string.api_default_value);
-        this.username_key = resources.getString(R.string.username_key);
-        this.username_default_value = resources.getString(R.string.username_default_value);
+
+        this.api = new MutableLiveData<String>();
+        this.username = new MutableLiveData<String>();
+        this.smsEnable = new MutableLiveData<Boolean>();
+
+        this.apiKey = resources.getString(R.string.api_key);
+        this.apiDefaultValue = resources.getString(R.string.api_default_value);
+        this.usernameKey = resources.getString(R.string.username_key);
+        this.usernameDefaultValue = resources.getString(R.string.username_default_value);
+
+        this.smsEnableKey = resources.getString(R.string.sms_enable_key);
+        this.smsEnableDefaultValue = resources.getBoolean(R.bool.sms_enable_default_value);
 
         fetchConfig();
     }
@@ -44,27 +54,29 @@ public class ConfigModel extends AndroidViewModel {
         return username;
     }
 
+    public MutableLiveData<Boolean> getSmsEnable() {
+        return smsEnable;
+    }
+
     private void fetchConfig() {
-
-        api = new MutableLiveData<>();
-        username = new MutableLiveData<>();
-
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
 
-        api.setValue(shp.getString(api_key, api_default_value));
-        username.setValue(shp.getString(username_key, username_default_value));
+        api.setValue(shp.getString(apiKey, apiDefaultValue));
+        username.setValue(shp.getString(usernameKey, usernameDefaultValue));
+        smsEnable.setValue(shp.getBoolean(smsEnableKey, smsEnableDefaultValue));
 
-        Log.d(TAG, "fetchConfig: api=" + api.getValue() + ", username=" + username.getValue());
+        Log.d(TAG, "fetchConfig: api=" + api.getValue() + ", username=" + username.getValue() + ", sms_enable=" + smsEnable.getValue().toString());
     }
 
     public void saveConfig() {
-        Log.d(TAG, "saveConfig: api=" + api.getValue() + ", username=" + username.getValue());
+        Log.d(TAG, "saveConfig: api=" + api.getValue() + ", username=" + username.getValue() + ", sms_enable=" + smsEnable.getValue().toString());
 
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shp.edit();
 
-        editor.putString(api_key, api.getValue());
-        editor.putString(username_key, username.getValue());
+        editor.putString(apiKey, api.getValue());
+        editor.putString(usernameKey, username.getValue());
+        editor.putBoolean(smsEnableKey, smsEnable.getValue());
         editor.commit();
     }
 
