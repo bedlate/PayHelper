@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -16,6 +17,7 @@ public class ConfigModel extends AndroidViewModel {
 
     private MutableLiveData<String> api, username;
     private MutableLiveData<Boolean> smsEnable;
+    private MutableLiveData<Boolean> networkAvailable;
 
     private final String TAG = "config";
     private final String CONFIG_FILE = "config";
@@ -34,12 +36,12 @@ public class ConfigModel extends AndroidViewModel {
         this.api = new MutableLiveData<String>();
         this.username = new MutableLiveData<String>();
         this.smsEnable = new MutableLiveData<Boolean>();
+        this.networkAvailable = new MutableLiveData<Boolean>();
 
         this.apiKey = resources.getString(R.string.api_key);
         this.apiDefaultValue = resources.getString(R.string.api_default_value);
         this.usernameKey = resources.getString(R.string.username_key);
         this.usernameDefaultValue = resources.getString(R.string.username_default_value);
-
         this.smsEnableKey = resources.getString(R.string.sms_enable_key);
         this.smsEnableDefaultValue = resources.getBoolean(R.bool.sms_enable_default_value);
 
@@ -58,12 +60,18 @@ public class ConfigModel extends AndroidViewModel {
         return smsEnable;
     }
 
+    public MutableLiveData<Boolean> getNetworkAvailable() {
+        return networkAvailable;
+    }
+
     private void fetchConfig() {
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
 
         api.setValue(shp.getString(apiKey, apiDefaultValue));
         username.setValue(shp.getString(usernameKey, usernameDefaultValue));
         smsEnable.setValue(shp.getBoolean(smsEnableKey, smsEnableDefaultValue));
+
+        networkAvailable.setValue(false);
 
         Log.d(TAG, "fetchConfig: api=" + api.getValue() + ", username=" + username.getValue() + ", sms_enable=" + smsEnable.getValue().toString());
     }
@@ -78,6 +86,8 @@ public class ConfigModel extends AndroidViewModel {
         editor.putString(usernameKey, username.getValue());
         editor.putBoolean(smsEnableKey, smsEnable.getValue());
         editor.commit();
+
+        Toast.makeText(this.application.getApplicationContext(), "保存成功", Toast.LENGTH_SHORT).show();
     }
 
 }
