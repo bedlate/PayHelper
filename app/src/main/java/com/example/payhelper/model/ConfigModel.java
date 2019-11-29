@@ -18,6 +18,7 @@ public class ConfigModel extends AndroidViewModel {
     private MutableLiveData<String> api, username;
     private MutableLiveData<Boolean> smsEnable;
     private MutableLiveData<Boolean> networkAvailable;
+    private MutableLiveData<Boolean> permissionAvailable;
 
     private final String TAG = "config";
     private final String CONFIG_FILE = "config";
@@ -37,6 +38,7 @@ public class ConfigModel extends AndroidViewModel {
         this.username = new MutableLiveData<String>();
         this.smsEnable = new MutableLiveData<Boolean>();
         this.networkAvailable = new MutableLiveData<Boolean>();
+        this.permissionAvailable = new MutableLiveData<Boolean>();
 
         this.apiKey = resources.getString(R.string.api_key);
         this.apiDefaultValue = resources.getString(R.string.api_default_value);
@@ -64,6 +66,10 @@ public class ConfigModel extends AndroidViewModel {
         return networkAvailable;
     }
 
+    public MutableLiveData<Boolean> getPermissionAvailable() {
+        return permissionAvailable;
+    }
+
     private void fetchConfig() {
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
 
@@ -72,6 +78,7 @@ public class ConfigModel extends AndroidViewModel {
         smsEnable.setValue(shp.getBoolean(smsEnableKey, smsEnableDefaultValue));
 
         networkAvailable.setValue(false);
+        permissionAvailable.setValue(false);
 
         Log.d(TAG, "fetchConfig: api=" + api.getValue() + ", username=" + username.getValue() + ", sms_enable=" + smsEnable.getValue().toString());
     }
