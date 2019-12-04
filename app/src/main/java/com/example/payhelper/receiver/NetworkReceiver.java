@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -17,7 +16,7 @@ public class NetworkReceiver extends BroadcastReceiver {
 
     ConfigModel configModel;
 
-    private final String TAG = "config";
+    private final String TAG = "pay";
 
     private Boolean networkAvailable;
 
@@ -41,6 +40,6 @@ public class NetworkReceiver extends BroadcastReceiver {
 
         configModel = ViewModelProviders.of(this.activity).get(ConfigModel.class);
         configModel.getNetworkAvailable().setValue(networkAvailable);
-        Log.d(TAG, configModel.getNetworkAvailable().getValue().toString());
+        Log.d(TAG, "网络状态:" + configModel.getNetworkAvailable().getValue().toString());
     }
 }
