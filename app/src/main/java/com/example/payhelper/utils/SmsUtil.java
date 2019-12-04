@@ -1,4 +1,4 @@
-package com.example.payhelper.helper;
+package com.example.payhelper.utils;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -27,16 +27,18 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class SmsHelper {
+public class SmsUtil {
 
-    private FragmentActivity activity;
+    public final static Uri SMS_URI = Uri.parse("content://sms/");
+
     private ConfigModel configModel;
+    private ContentResolver contentResolver;
 
     private final String TAG = "pay";
 
-    public SmsHelper(FragmentActivity activity) {
-        this.activity = activity;
+    public SmsUtil(FragmentActivity activity) {
         this.configModel = ViewModelProviders.of(activity).get(ConfigModel.class);
+        this.contentResolver = activity.getContentResolver();
 
         fetchData();
     }
@@ -49,41 +51,39 @@ public class SmsHelper {
         // todo
         Log.d(TAG, "收到短信");
 
-        ContentResolver cr = this.activity.getContentResolver();
         // "_id","thread_id","address","person","date","type","body"
         // date address body
         String[] projection = new String[] {"address", "date", "body"};
 
         long lastDate = System.currentTimeMillis() - 10 * 60 * 10000;
-//        if (this.configModel.getLastDate().getValue() > 0) {
-//            lastDate = this.configModel.getLastDate().getValue();
-//        }
+        if (this.configModel.getLastDate().getValue() > 0) {
+            lastDate = this.configModel.getLastDate().getValue();
+        }
         String where = " date >  " + lastDate;
-        Cursor cur = cr.query(SmsObserver.SMS_URI, projection, where, null, "date desc");   // SMS_URI, projection, where
+        Cursor cur = contentResolver.query(SMS_URI, projection, where, null, "date desc");   // SMS_URI, projection, where
 
-        if (null == cur) {
-            return;
-        }
-
-        long nowDate = 0;
         ArrayList<SmsObject> smsList = new ArrayList<SmsObject>();
-        while (cur.moveToNext()) {
-            long date = cur.getLong(cur.getColumnIndex("date"));
-            String address = cur.getString(cur.getColumnIndex("address"));
-            String body = cur.getString(cur.getColumnIndex("body"));
+        long nowDate = 0;
 
-            SmsObject smsObject = new SmsObject();
-            smsObject.date = date;
-            smsObject.body = body;
-            smsObject.address = address;
+        if (null != cur) {
+            while (cur.moveToNext()) {
+                long date = cur.getLong(cur.getColumnIndex("date"));
+                String address = cur.getString(cur.getColumnIndex("address"));
+                String body = cur.getString(cur.getColumnIndex("body"));
 
-            smsList.add(smsObject);
+                SmsObject smsObject = new SmsObject();
+                smsObject.date = date;
+                smsObject.body = body;
+                smsObject.address = address;
 
-            if (date > nowDate) {
-                nowDate = date;
+                smsList.add(smsObject);
+
+                if (date > nowDate) {
+                    nowDate = date;
+                }
             }
+            cur.close();
         }
-        cur.close();
 
         Gson gson = new Gson();
         String json = gson.toJson(smsList);

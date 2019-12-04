@@ -6,23 +6,22 @@ import android.os.Handler;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.payhelper.helper.SmsHelper;
+import com.example.payhelper.utils.SmsUtil;
 
 public class SmsObserver extends ContentObserver {
 
-    public static Uri SMS_URI = Uri.parse("content://sms/");
-    private SmsHelper smsHelper;
+    private SmsUtil smsUtil;
 
     public SmsObserver(FragmentActivity activity, Handler handler) {
         super(handler);
 
-        this.smsHelper = new SmsHelper(activity);
+        this.smsUtil = new SmsUtil(activity);
     }
 
     @Override
     public void onChange(boolean selfChange) {
         super.onChange(selfChange);
 
-        this.smsHelper.fetchData();
+        this.smsUtil.fetchData();
     }
 }

@@ -15,6 +15,7 @@ import com.example.payhelper.databinding.ActivityMainBinding;
 import com.example.payhelper.model.ConfigModel;
 import com.example.payhelper.observer.SmsObserver;
 import com.example.payhelper.receiver.NetworkReceiver;
+import com.example.payhelper.utils.SmsUtil;
 
 import java.util.List;
 
@@ -64,17 +65,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         networkReceiver = new NetworkReceiver(this);
         registerReceiver(networkReceiver, intentFilter);
 
-        // 注册监听器
+        // 注册监听器: 被动接收短信
         smsObserver = new SmsObserver(this, new Handler());
-        getContentResolver().registerContentObserver(SmsObserver.SMS_URI, true, smsObserver);
+        getContentResolver().registerContentObserver(SmsUtil.SMS_URI, true, smsObserver);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // 卸载接收器
+        // 卸载网络接收器
         unregisterReceiver(networkReceiver);
-        // 卸载监听器
+        // 卸载短信监听器
         getContentResolver().unregisterContentObserver(smsObserver);
     }
 
