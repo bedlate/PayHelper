@@ -14,16 +14,12 @@ import com.example.payhelper.model.ConfigModel;
 
 public class NetworkReceiver extends BroadcastReceiver {
 
-    ConfigModel configModel;
-
     private final String TAG = "pay";
 
-    private Boolean networkAvailable;
-
-    private FragmentActivity activity;
+    private ConfigModel configModel;
 
     public NetworkReceiver(FragmentActivity activity) {
-        this.activity = activity;
+        configModel = ViewModelProviders.of(activity).get(ConfigModel.class);
     }
 
     @Override
@@ -32,13 +28,11 @@ public class NetworkReceiver extends BroadcastReceiver {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
+        Boolean networkAvailable = false;
+
         if (null != activeNetwork && activeNetwork.isAvailable()) {
             networkAvailable = true;
-        } else {
-            networkAvailable = false;
         }
-
-        configModel = ViewModelProviders.of(this.activity).get(ConfigModel.class);
         configModel.getNetworkAvailable().setValue(networkAvailable);
         Log.d(TAG, "网络状态:" + configModel.getNetworkAvailable().getValue().toString());
     }

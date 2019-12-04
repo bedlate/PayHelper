@@ -1,4 +1,4 @@
-package com.example.payhelper.utils;
+package com.example.payhelper.util;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.payhelper.model.ConfigModel;
 import com.example.payhelper.model.SmsObject;
-import com.example.payhelper.observer.SmsObserver;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,10 +28,11 @@ import okhttp3.ResponseBody;
 
 public class SmsUtil {
 
-    public final static Uri SMS_URI = Uri.parse("content://sms/");
+    public final static Uri SMS_URI = Uri.parse("content://sms/inbox");
 
     private ConfigModel configModel;
     private ContentResolver contentResolver;
+    private OkHttpClient client;
 
     private final String TAG = "pay";
 
@@ -40,7 +40,14 @@ public class SmsUtil {
         this.configModel = ViewModelProviders.of(activity).get(ConfigModel.class);
         this.contentResolver = activity.getContentResolver();
 
-        fetchData();
+        client = new OkHttpClient();
+    }
+
+    public SmsUtil(ConfigModel configModel, ContentResolver contentResolver) {
+        this.configModel = configModel;
+        this.contentResolver = contentResolver;
+
+        client = new OkHttpClient();
     }
 
     public void fetchData() {
@@ -99,10 +106,10 @@ public class SmsUtil {
         // 上传数据
         String api = this.configModel.getApi().getValue();
         String url = api + "/pay/guest/mybank/notify";
-        String username = this.configModel.getUsername().getValue();
+        String slug = this.configModel.getUsername().getValue();
 
         RequestBody formBody = new FormBody.Builder()
-                .add("slug", username)
+                .add("slug", slug)
                 .add("action", "getSmsList")
                 .add("data", data)
                 .build();
@@ -111,8 +118,6 @@ public class SmsUtil {
                 .url(url)
                 .post(formBody)
                 .build();
-
-        OkHttpClient client = new OkHttpClient();
 
         client.newCall(request).enqueue(new Callback() {
 

@@ -1,6 +1,7 @@
 package com.example.payhelper;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +16,8 @@ import com.example.payhelper.databinding.ActivityMainBinding;
 import com.example.payhelper.model.ConfigModel;
 import com.example.payhelper.observer.SmsObserver;
 import com.example.payhelper.receiver.NetworkReceiver;
-import com.example.payhelper.utils.SmsUtil;
+import com.example.payhelper.service.SmsService;
+import com.example.payhelper.util.SmsUtil;
 
 import java.util.List;
 
@@ -24,10 +26,10 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
-    ConfigModel configModel;
-    ActivityMainBinding binding;
+    private ConfigModel configModel;
 
     private NetworkReceiver networkReceiver;
+    private Intent smsIntent;
 
     private final String TAG = "pay";
 
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
 
         configModel = ViewModelProviders.of(this).get(ConfigModel.class);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setConfig(configModel);
         binding.setLifecycleOwner(this);
 
@@ -68,6 +70,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         // 注册监听器: 被动接收短信
         smsObserver = new SmsObserver(this, new Handler());
         getContentResolver().registerContentObserver(SmsUtil.SMS_URI, true, smsObserver);
+
+        // 启动服务: 后台主动接收短信
+        smsIntent = new Intent(this, SmsService.class);
+        startService(smsIntent);
     }
 
     @Override
@@ -77,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         unregisterReceiver(networkReceiver);
         // 卸载短信监听器
         getContentResolver().unregisterContentObserver(smsObserver);
+        // 停止后台服务
+        stopService(smsIntent);
     }
 
 

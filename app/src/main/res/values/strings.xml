@@ -13,7 +13,6 @@
     <string name="sms_enable_key">sms_enable</string>
     <string name="network_available_text">网络状态</string>
     <string name="permission_available_text">权限状态</string>
-    <bool name="sms_enable_default_value">false</bool>
     <string name="last_date_key">last_date</string>
     <string name="last_date_default_value">0</string>
 </resources>

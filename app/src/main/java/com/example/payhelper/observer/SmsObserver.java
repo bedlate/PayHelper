@@ -1,12 +1,11 @@
 package com.example.payhelper.observer;
 
 import android.database.ContentObserver;
-import android.net.Uri;
 import android.os.Handler;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.payhelper.utils.SmsUtil;
+import com.example.payhelper.util.SmsUtil;
 
 public class SmsObserver extends ContentObserver {
 
