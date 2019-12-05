@@ -20,6 +20,7 @@ public class ConfigModel extends AndroidViewModel {
     private MutableLiveData<Boolean> networkAvailable;
     private MutableLiveData<Boolean> permissionAvailable;
     private MutableLiveData<Long> lastDate;
+    private MutableLiveData<Boolean> isRunning;
 
     private final String TAG = "pay";
     private final String CONFIG_FILE = "config";
@@ -41,6 +42,7 @@ public class ConfigModel extends AndroidViewModel {
         this.networkAvailable = new MutableLiveData<Boolean>();
         this.permissionAvailable = new MutableLiveData<Boolean>();
         this.lastDate = new MutableLiveData<Long>();
+        this.isRunning = new MutableLiveData<Boolean>();
 
         this.apiKey = resources.getString(R.string.api_key);
         this.apiDefaultValue = resources.getString(R.string.api_default_value);
@@ -78,6 +80,10 @@ public class ConfigModel extends AndroidViewModel {
         return lastDate;
     }
 
+    public MutableLiveData<Boolean> getIsRunning() {
+        return isRunning;
+    }
+
     private void fetchConfig() {
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
 
@@ -89,6 +95,7 @@ public class ConfigModel extends AndroidViewModel {
         permissionAvailable.setValue(false);
 
         lastDate.setValue(Long.parseLong(shp.getString(lastDateKey, lastDateDefaultValue)));
+        isRunning.setValue(false);
 
         Log.d(TAG, "fetchConfig: api=" + api.getValue()
                 + ", username=" + username.getValue()

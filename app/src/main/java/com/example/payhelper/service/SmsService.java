@@ -22,13 +22,13 @@ public class SmsService extends Service {
     AlarmManager alarmManager;
     SmsUtil smsUtil;
 
-    public static final String TEST_ACTION = "com.example.payhelper." + "SMS_SERVICE";
+    public static final String SMS_ACTION = "com.example.payhelper." + "SMS_SERVICE";
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (TEST_ACTION.equals(action)) {
+            if (SMS_ACTION.equals(action)) {
                 smsUtil.fetchData();
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -46,11 +46,11 @@ public class SmsService extends Service {
 
         smsUtil = SmsUtil.getInstance(getApplication(), getContentResolver());
 
-        IntentFilter intentFilter = new IntentFilter(TEST_ACTION);
+        IntentFilter intentFilter = new IntentFilter(SMS_ACTION);
         registerReceiver(receiver, intentFilter);
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent intent = new Intent();
-        intent.setAction(TEST_ACTION);
+        intent.setAction(SMS_ACTION);
         pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {   //6.0低电量模式需要使用该方法触发定时任务

@@ -55,11 +55,11 @@ public class SmsUtil {
     }
 
     public void fetchData() {
-        if (!this.configModel.getSmsEnable().getValue()) {
-            return;
-        }
+        // todo: 暂时隐藏是否启用短信服务
+//        if (!this.configModel.getSmsEnable().getValue()) {
+//            return;
+//        }
 
-        // todo
         Log.d(TAG, "收到短信");
 
         // "_id","thread_id","address","person","date","type","body"

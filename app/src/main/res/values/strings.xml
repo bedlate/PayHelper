@@ -17,4 +17,7 @@
     <string name="permission_available_text">权限状态</string>
     <string name="last_date_key">last_date</string>
     <string name="last_date_default_value">0</string>
+    <string name="start_text">开启服务</string>
+    <string name="stop_text">停止服务</string>
+    <string name="is_running_text">服务状态</string>
 </resources>

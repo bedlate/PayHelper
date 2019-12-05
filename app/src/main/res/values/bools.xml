@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="sms_enable_default_value">false</bool>
+    <bool name="sms_enable_default_value">true</bool>
 </resources>

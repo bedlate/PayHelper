@@ -3,14 +3,13 @@ package com.example.payhelper.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.payhelper.model.ConfigModel;
+import com.example.payhelper.util.NetworkUtil;
 
 public class NetworkReceiver extends BroadcastReceiver {
 
@@ -25,18 +24,10 @@ public class NetworkReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        boolean isConnected = false;
-
-        if (null != connectivityManager) {
-            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-            if (null != activeNetwork) {
-                isConnected = activeNetwork.isAvailable();
-            }
-        }
+        boolean isConnected = NetworkUtil.isAvailable(context);
 
         configModel.getNetworkAvailable().setValue(isConnected);
+
         Log.d(TAG, "网络状态:" + configModel.getNetworkAvailable().getValue().toString());
     }
 }
