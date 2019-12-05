@@ -26,14 +26,17 @@ public class NetworkReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
 
-        Boolean networkAvailable = false;
+        boolean isConnected = false;
 
-        if (null != activeNetwork && activeNetwork.isAvailable()) {
-            networkAvailable = true;
+        if (null != connectivityManager) {
+            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            if (null != activeNetwork) {
+                isConnected = activeNetwork.isAvailable();
+            }
         }
-        configModel.getNetworkAvailable().setValue(networkAvailable);
+
+        configModel.getNetworkAvailable().setValue(isConnected);
         Log.d(TAG, "网络状态:" + configModel.getNetworkAvailable().getValue().toString());
     }
 }

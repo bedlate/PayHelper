@@ -16,6 +16,7 @@ import com.example.payhelper.databinding.ActivityMainBinding;
 import com.example.payhelper.model.ConfigModel;
 import com.example.payhelper.observer.SmsObserver;
 import com.example.payhelper.receiver.NetworkReceiver;
+import com.example.payhelper.service.DaemonService;
 import com.example.payhelper.service.SmsService;
 import com.example.payhelper.util.SmsUtil;
 
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private NetworkReceiver networkReceiver;
     private Intent smsIntent;
+    private Intent daemonIntent;
 
     private final String TAG = "pay";
 
@@ -74,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         // 启动服务: 后台主动接收短信
         smsIntent = new Intent(this, SmsService.class);
         startService(smsIntent);
+
+        // 守护进程
+        daemonIntent = new Intent(getApplicationContext(), DaemonService.class);
+        startService(daemonIntent);
     }
 
     @Override
@@ -83,8 +89,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         unregisterReceiver(networkReceiver);
         // 卸载短信监听器
         getContentResolver().unregisterContentObserver(smsObserver);
-        // 停止后台服务
-        stopService(smsIntent);
+//        // 停止短信后台服务
+//        stopService(smsIntent);
+//        // 停止守护进程服务
+//        stopService(daemonIntent);
     }
 
 

@@ -14,7 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <service
+            android:name=".service.DaemonService"
+            android:enabled="true"
+            android:exported="false"></service>
         <service
             android:name=".service.SmsService"
             android:enabled="true"
