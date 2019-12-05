@@ -10,16 +10,14 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.payhelper.model.ConfigModel;
 import com.example.payhelper.util.SmsUtil;
 
 public class SmsService extends Service {
 
-    int TIME_INTERVAL = 5000; // 这是5s
+    int TIME_INTERVAL = 20000; // 这是5s
     PendingIntent pendingIntent;
     AlarmManager alarmManager;
     SmsUtil smsUtil;
@@ -46,7 +44,7 @@ public class SmsService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        smsUtil = new SmsUtil(new ConfigModel(getApplication()), getContentResolver());
+        smsUtil = SmsUtil.getInstance(getApplication(), getContentResolver());
 
         IntentFilter intentFilter = new IntentFilter(TEST_ACTION);
         registerReceiver(receiver, intentFilter);

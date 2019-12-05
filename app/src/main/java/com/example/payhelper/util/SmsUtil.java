@@ -1,21 +1,19 @@
 package com.example.payhelper.util;
 
+import android.app.Application;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-
 import com.example.payhelper.model.ConfigModel;
-import com.example.payhelper.model.SmsObject;
-import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,11 +22,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class SmsUtil {
 
-    public final static Uri SMS_URI = Uri.parse("content://sms/inbox");
+    public final static Uri SMS_URI = Uri.parse("content://sms/");
+    public final static String SMS_RAW_URI = "content://sms/raw";
 
     private ConfigModel configModel;
     private ContentResolver contentResolver;
@@ -36,15 +34,21 @@ public class SmsUtil {
 
     private final String TAG = "pay";
 
-    public SmsUtil(FragmentActivity activity) {
-        this.configModel = ViewModelProviders.of(activity).get(ConfigModel.class);
-        this.contentResolver = activity.getContentResolver();
+    private static SmsUtil instance;
 
-        client = new OkHttpClient();
+    public static SmsUtil getInstance(Application application, ContentResolver contentResolver) {
+        if (null == instance) {
+            synchronized (SmsUtil.class) {
+                if (null == instance) {
+                    instance = new SmsUtil(application, contentResolver);
+                }
+            }
+        }
+        return instance;
     }
 
-    public SmsUtil(ConfigModel configModel, ContentResolver contentResolver) {
-        this.configModel = configModel;
+    private SmsUtil(Application application, ContentResolver contentResolver) {
+        this.configModel = new ConfigModel(application);
         this.contentResolver = contentResolver;
 
         client = new OkHttpClient();
@@ -66,11 +70,11 @@ public class SmsUtil {
         if (this.configModel.getLastDate().getValue() > 0) {
             lastDate = this.configModel.getLastDate().getValue();
         }
-        String where = " date >  " + lastDate;
+        String where = " date > " + lastDate;
         Cursor cur = contentResolver.query(SMS_URI, projection, where, null, "date desc");   // SMS_URI, projection, where
 
-        ArrayList<SmsObject> smsList = new ArrayList<SmsObject>();
         long nowDate = 0;
+        JSONArray smsList = new JSONArray();
 
         if (null != cur) {
             while (cur.moveToNext()) {
@@ -78,12 +82,13 @@ public class SmsUtil {
                 String address = cur.getString(cur.getColumnIndex("address"));
                 String body = cur.getString(cur.getColumnIndex("body"));
 
-                SmsObject smsObject = new SmsObject();
-                smsObject.date = date;
-                smsObject.body = body;
-                smsObject.address = address;
-
-                smsList.add(smsObject);
+                try {
+                    JSONObject smObject = new JSONObject();
+                    smObject.put("date", date).put("address", address).put("body", body);
+                    smsList.put(smObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 if (date > nowDate) {
                     nowDate = date;
@@ -92,8 +97,7 @@ public class SmsUtil {
             cur.close();
         }
 
-        Gson gson = new Gson();
-        String json = gson.toJson(smsList);
+        String json = smsList.toString();
 
         postData(json, lastDate, nowDate);
     }
@@ -103,14 +107,20 @@ public class SmsUtil {
         final long ld = lastDate;
         final long nd = nowDate;
 
+        Log.d(TAG, "postData: " + data);
+
         // 上传数据
         String api = this.configModel.getApi().getValue();
         String url = api + "/pay/guest/mybank/notify";
         String slug = this.configModel.getUsername().getValue();
+        String action = "getSmsList";
+        if ("[]".equals(data)) {
+            action = "pingSms";
+        }
 
         RequestBody formBody = new FormBody.Builder()
                 .add("slug", slug)
-                .add("action", "getSmsList")
+                .add("action", action)
                 .add("data", data)
                 .build();
 
@@ -129,11 +139,11 @@ public class SmsUtil {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
-                    ResponseBody responseBody = response.body();
                     if (!response.isSuccessful()) {
                         Log.d(TAG, "fetchData(fail): " + response);
                     } else {
-                        Log.d(TAG, "fetchData(success): " + responseBody.string());
+                        String json = response.body().string(); // string()仅能调用一次
+                        Log.d(TAG, "fetchData(success): " + json);
 
                         if (nd > ld) {
                             configModel.saveLastDate(nd);
@@ -141,6 +151,7 @@ public class SmsUtil {
                     }
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     Log.d(TAG, "fetchData(exception): " + e);
                 }
             }
