@@ -20,4 +20,5 @@
     <string name="start_text">开启服务</string>
     <string name="stop_text">停止服务</string>
     <string name="is_running_text">服务状态</string>
+    <string name="goto_permission_text">设置权限</string>
 </resources>

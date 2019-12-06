@@ -36,20 +36,20 @@ public class SmsUtil {
 
     private static SmsUtil instance;
 
-    public static SmsUtil getInstance(Application application, ContentResolver contentResolver) {
+    public static SmsUtil getInstance(Application application) {
         if (null == instance) {
             synchronized (SmsUtil.class) {
                 if (null == instance) {
-                    instance = new SmsUtil(application, contentResolver);
+                    instance = new SmsUtil(application);
                 }
             }
         }
         return instance;
     }
 
-    private SmsUtil(Application application, ContentResolver contentResolver) {
+    private SmsUtil(Application application) {
         this.configModel = new ConfigModel(application);
-        this.contentResolver = contentResolver;
+        this.contentResolver = application.getContentResolver();
 
         client = new OkHttpClient();
     }

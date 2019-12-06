@@ -44,7 +44,7 @@ public class SmsService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        smsUtil = SmsUtil.getInstance(getApplication(), getContentResolver());
+        smsUtil = SmsUtil.getInstance(getApplication());
 
         IntentFilter intentFilter = new IntentFilter(SMS_ACTION);
         registerReceiver(receiver, intentFilter);

@@ -1,11 +1,10 @@
 package com.example.payhelper.observer;
 
+import android.app.Application;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
-
-import androidx.fragment.app.FragmentActivity;
 
 import com.example.payhelper.util.SmsUtil;
 
@@ -13,10 +12,10 @@ public class SmsObserver extends ContentObserver {
 
     private SmsUtil smsUtil;
 
-    public SmsObserver(FragmentActivity activity, Handler handler) {
+    public SmsObserver(Application application, Handler handler) {
         super(handler);
 
-        this.smsUtil = SmsUtil.getInstance(activity.getApplication(), activity.getContentResolver());
+        this.smsUtil = SmsUtil.getInstance(application);
     }
 
     @Override

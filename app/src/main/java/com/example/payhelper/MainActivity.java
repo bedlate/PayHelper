@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Process;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.example.payhelper.receiver.NetworkReceiver;
 import com.example.payhelper.service.DaemonService;
 import com.example.payhelper.service.SmsService;
 import com.example.payhelper.util.NetworkUtil;
+import com.example.payhelper.util.PermissionUtil;
 import com.example.payhelper.util.ServiceUtil;
 import com.example.payhelper.util.SmsUtil;
 
@@ -98,11 +100,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
+    public void onGotoPermission(View v) {
+
+        PermissionUtil.getInstance(getApplicationContext()).gotoPermission();
+    }
+
     private void startServices() {
         Log.d(TAG, "启动服务");
 
         // 短信监听器
-        smsObserver = new SmsObserver(this, new Handler());
+        smsObserver = new SmsObserver(getApplication(), new Handler());
         getContentResolver().registerContentObserver(SmsUtil.SMS_URI, true, smsObserver);
 
         // 启动服务: 后台主动接收短信
@@ -128,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 //
 //        configModel.getIsRunning().setValue(false);
         Toast.makeText(getApplicationContext(), "服务太猛，无法关闭，请在应用管理中强制结束应用", Toast.LENGTH_LONG).show();
+
+        Process.killProcess(Process.myPid());
     }
 
     private void checkPermission() {
