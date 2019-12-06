@@ -48,10 +48,10 @@ public class SmsUtil {
     }
 
     private SmsUtil(Application application) {
-        this.configModel = new ConfigModel(application);
+        this.configModel = ConfigModel.getInstance(application);
         this.contentResolver = application.getContentResolver();
 
-        client = new OkHttpClient();
+        this.client = new OkHttpClient();
     }
 
     public void fetchData() {

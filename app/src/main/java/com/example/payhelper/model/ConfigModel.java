@@ -29,6 +29,19 @@ public class ConfigModel extends AndroidViewModel {
     private String apiKey, apiDefaultValue, usernameKey, usernameDefaultValue, smsEnableKey, lastDateKey, lastDateDefaultValue;
     private Boolean smsEnableDefaultValue;
 
+    private static ConfigModel instance;
+
+    public static ConfigModel getInstance(Application application) {
+        if (null == instance) {
+            synchronized (ConfigModel.class) {
+                if (null == instance) {
+                    instance = new ConfigModel(application);
+                }
+            }
+        }
+        return instance;
+    }
+
     public ConfigModel(@NonNull Application application) {
         super(application);
 
@@ -119,9 +132,7 @@ public class ConfigModel extends AndroidViewModel {
     }
 
     public void saveLastDate(long date) {
-        Log.d(TAG, "date_before: " + String.valueOf(lastDate.getValue()) + ", now_date=" + String.valueOf(date));
         lastDate.postValue(date);
-        Log.d(TAG, "date_after: " + String.valueOf(lastDate.getValue()));
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shp.edit();
         editor.putString(lastDateKey, String.valueOf(date));

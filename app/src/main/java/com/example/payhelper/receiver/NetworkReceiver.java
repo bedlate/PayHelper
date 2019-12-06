@@ -1,12 +1,10 @@
 package com.example.payhelper.receiver;
 
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.payhelper.model.ConfigModel;
 import com.example.payhelper.util.NetworkUtil;
@@ -17,8 +15,8 @@ public class NetworkReceiver extends BroadcastReceiver {
 
     private ConfigModel configModel;
 
-    public NetworkReceiver(FragmentActivity activity) {
-        configModel = ViewModelProviders.of(activity).get(ConfigModel.class);
+    public NetworkReceiver(Application application) {
+        configModel = ConfigModel.getInstance(application);
     }
 
     @Override
