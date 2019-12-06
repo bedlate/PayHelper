@@ -3,10 +3,8 @@ package com.example.payhelper.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.example.payhelper.model.ConfigModel;
 import com.example.payhelper.observer.SmsObserver;
@@ -16,8 +14,6 @@ import com.example.payhelper.service.SmsService;
 public class ServiceUtil {
 
     private static ServiceUtil instance;
-
-    private final String TAG = "pay";
 
     private Activity activity;
 
@@ -49,7 +45,7 @@ public class ServiceUtil {
 
 
     public void startServices() {
-        Log.d(TAG, "启动服务");
+        LogUtil.d("启动服务");
 
         // 短信监听器
         smsObserver = new SmsObserver(activity.getApplication(), new Handler());
@@ -67,7 +63,7 @@ public class ServiceUtil {
     }
 
     public void stopServices() {
-        Log.d(TAG, "停止服务");
+        LogUtil.d("停止服务");
 
         // 短信监听器
         activity.getContentResolver().unregisterContentObserver(smsObserver);

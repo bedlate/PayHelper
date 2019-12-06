@@ -5,28 +5,26 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import com.example.payhelper.MainActivity;
 import com.example.payhelper.R;
+import com.example.payhelper.util.LogUtil;
 
 public class DaemonService extends Service {
-
-    private final static String TAG = "pay";
 
     private final static int FOREGROUND_ID = 1000;
 
     @Override
     public void onCreate() {
-        Log.i(TAG, "创建守护进程");
+        LogUtil.d("创建守护进程");
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "启动守护进程");
+        LogUtil.d("启动守护进程");
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher);
@@ -50,7 +48,7 @@ public class DaemonService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.i(TAG, "摧毁守护进程");
+        LogUtil.d("摧毁守护进程");
         super.onDestroy();
     }
 }

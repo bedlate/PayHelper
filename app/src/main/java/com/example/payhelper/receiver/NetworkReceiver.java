@@ -4,14 +4,12 @@ import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.example.payhelper.model.ConfigModel;
+import com.example.payhelper.util.LogUtil;
 import com.example.payhelper.util.NetworkUtil;
 
 public class NetworkReceiver extends BroadcastReceiver {
-
-    private final String TAG = "pay";
 
     private ConfigModel configModel;
 
@@ -26,6 +24,6 @@ public class NetworkReceiver extends BroadcastReceiver {
 
         configModel.getNetworkAvailable().setValue(isConnected);
 
-        Log.d(TAG, "网络状态:" + configModel.getNetworkAvailable().getValue().toString());
+        LogUtil.d("网络状态:" + configModel.getNetworkAvailable().getValue().toString());
     }
 }

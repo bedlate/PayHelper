@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
 
 import com.example.payhelper.model.ConfigModel;
 
@@ -32,8 +31,6 @@ public class SmsUtil {
     private ContentResolver contentResolver;
     private OkHttpClient client;
 
-    private final String TAG = "pay";
-
     private static SmsUtil instance;
 
     public static SmsUtil getInstance(Application application) {
@@ -60,7 +57,7 @@ public class SmsUtil {
 //            return;
 //        }
 
-        Log.d(TAG, "收到短信");
+        LogUtil.d("收到短信");
 
         // "_id","thread_id","address","person","date","type","body"
         // date address body
@@ -107,7 +104,7 @@ public class SmsUtil {
         final long ld = lastDate;
         final long nd = nowDate;
 
-        Log.d(TAG, "postData: " + data);
+        LogUtil.d("postData: " + data);
 
         // 上传数据
         String api = this.configModel.getApi().getValue();
@@ -140,10 +137,10 @@ public class SmsUtil {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     if (!response.isSuccessful()) {
-                        Log.d(TAG, "fetchData(fail): " + response);
+                        LogUtil.d("fetchData(fail): " + response);
                     } else {
                         String json = response.body().string(); // string()仅能调用一次
-                        Log.d(TAG, "fetchData(success): " + json);
+                        LogUtil.d("fetchData(success): " + json);
 
                         if (nd > ld) {
                             configModel.saveLastDate(nd);
@@ -152,7 +149,7 @@ public class SmsUtil {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d(TAG, "fetchData(exception): " + e);
+                    LogUtil.d("fetchData(exception): " + e);
                 }
             }
         });

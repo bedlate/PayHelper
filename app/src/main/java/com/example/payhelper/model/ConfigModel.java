@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -12,6 +11,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.payhelper.R;
+import com.example.payhelper.util.LogUtil;
 
 public class ConfigModel extends AndroidViewModel {
 
@@ -22,7 +22,6 @@ public class ConfigModel extends AndroidViewModel {
     private MutableLiveData<Long> lastDate;
     private MutableLiveData<Boolean> isRunning;
 
-    private final String TAG = "pay";
     private final String CONFIG_FILE = "config";
 
     private Application application;
@@ -110,7 +109,7 @@ public class ConfigModel extends AndroidViewModel {
         lastDate.setValue(Long.parseLong(shp.getString(lastDateKey, lastDateDefaultValue)));
         isRunning.setValue(false);
 
-        Log.d(TAG, "fetchConfig: api=" + api.getValue()
+        LogUtil.d("fetchConfig: api=" + api.getValue()
                 + ", username=" + username.getValue()
                 + ", sms_enable=" + smsEnable.getValue().toString()
                 + ", last_date=" + lastDate.getValue().toString()
@@ -118,7 +117,7 @@ public class ConfigModel extends AndroidViewModel {
     }
 
     public void saveConfig() {
-        Log.d(TAG, "saveConfig: api=" + api.getValue() + ", username=" + username.getValue() + ", sms_enable=" + smsEnable.getValue().toString());
+        LogUtil.d("saveConfig: api=" + api.getValue() + ", username=" + username.getValue() + ", sms_enable=" + smsEnable.getValue().toString());
 
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shp.edit();
