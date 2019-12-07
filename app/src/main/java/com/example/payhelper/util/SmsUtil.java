@@ -104,8 +104,6 @@ public class SmsUtil {
         final long ld = lastDate;
         final long nd = nowDate;
 
-        LogUtil.d("postData: " + data);
-
         // 上传数据
         String api = this.configModel.getApi().getValue();
         String url = api + "/pay/guest/mybank/notify";
@@ -113,6 +111,16 @@ public class SmsUtil {
         String action = "getSmsList";
         if ("[]".equals(data)) {
             action = "pingSms";
+        }
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("slug", slug);
+            jsonObject.put("action", action);
+            jsonObject.put("data", data);
+            LogUtil.d("request:" + jsonObject.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         RequestBody formBody = new FormBody.Builder()
@@ -137,19 +145,28 @@ public class SmsUtil {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     if (!response.isSuccessful()) {
-                        LogUtil.d("fetchData(fail): " + response);
+                        LogUtil.d("response(fail): " + response);
                     } else {
                         String json = response.body().string(); // string()仅能调用一次
-                        LogUtil.d("fetchData(success): " + json);
 
-                        if (nd > ld) {
-                            configModel.saveLastDate(nd);
+                        LogUtil.d("response(success): " + json);
+
+                        JSONObject res = new JSONObject(json);
+                        int resCode = res.getInt("code");
+                        String resMessage = res.getString("message");
+
+                        if (1 == resCode) {
+                            if (nd > ld) {
+                                configModel.saveLastDate(nd);
+                            }
+                        } else {
+                            LogUtil.e(resMessage);
                         }
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LogUtil.d("fetchData(exception): " + e);
+                    LogUtil.e("response(exception): " + e);
                 }
             }
         });
