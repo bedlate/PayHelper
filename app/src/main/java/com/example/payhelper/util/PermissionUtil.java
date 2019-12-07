@@ -73,8 +73,9 @@ public class PermissionUtil {
     private void gotoMeizuPermission() {
         try {
             Intent intent = new Intent("com.meizu.safe.security.SHOW_APPSEC");
-            intent.addCategory(Intent.CATEGORY_DEFAULT);
+//            intent.addCategory(Intent.CATEGORY_DEFAULT);
             intent.putExtra("packageName", BuildConfig.APPLICATION_ID);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } catch (Exception e) {
             e.printStackTrace();
