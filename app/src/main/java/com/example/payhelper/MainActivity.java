@@ -96,6 +96,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         logUtil.move();
     }
 
+    public void onClearLogFile(View v) {
+        logUtil.clear();
+    }
+
     private void checkPermission() {
         boolean hasPermissions = EasyPermissions.hasPermissions(this, PERMISSIONS);
         configModel.getPermissionAvailable().setValue(hasPermissions);

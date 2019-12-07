@@ -66,8 +66,10 @@ public class LogUtil {
                     files[i].delete();
                 }
             }
+            Toast.makeText(application.getApplicationContext(), "清理完成", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(application.getApplicationContext(), "清理失败," + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
     }
