@@ -5,7 +5,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.example.payhelper.model.ConfigModel;
+import com.example.payhelper.viewmodel.ConfigModel;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;

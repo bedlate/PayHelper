@@ -1,4 +1,4 @@
-package com.example.payhelper.model;
+package com.example.payhelper.viewmodel;
 
 import android.app.Application;
 import android.content.Context;

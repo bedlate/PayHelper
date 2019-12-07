@@ -5,7 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.payhelper.model.ConfigModel;
+import com.example.payhelper.viewmodel.ConfigModel;
 import com.example.payhelper.util.LogUtil;
 import com.example.payhelper.util.NetworkUtil;
 

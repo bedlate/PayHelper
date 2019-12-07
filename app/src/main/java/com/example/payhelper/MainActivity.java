@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import com.example.payhelper.databinding.ActivityMainBinding;
-import com.example.payhelper.model.ConfigModel;
+import com.example.payhelper.viewmodel.ConfigModel;
 import com.example.payhelper.receiver.NetworkReceiver;
 import com.example.payhelper.util.LogUtil;
 import com.example.payhelper.util.PermissionUtil;

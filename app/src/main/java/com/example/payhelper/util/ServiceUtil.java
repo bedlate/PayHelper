@@ -6,7 +6,7 @@ import android.os.Handler;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.payhelper.model.ConfigModel;
+import com.example.payhelper.viewmodel.ConfigModel;
 import com.example.payhelper.observer.SmsObserver;
 import com.example.payhelper.service.DaemonService;
 import com.example.payhelper.service.SmsService;

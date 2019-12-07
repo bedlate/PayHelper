@@ -6,7 +6,7 @@
     <data>
         <variable
             name="config"
-            type="com.example.payhelper.model.ConfigModel" />
+            type="com.example.payhelper.viewmodel.ConfigModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
