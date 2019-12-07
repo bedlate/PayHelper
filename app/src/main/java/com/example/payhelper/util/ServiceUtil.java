@@ -17,6 +17,8 @@ public class ServiceUtil {
 
     private Activity activity;
 
+    private LogUtil logUtil;
+
     private ConfigModel configModel;
 
     private Intent smsIntent;
@@ -24,6 +26,7 @@ public class ServiceUtil {
     private SmsObserver smsObserver;
 
     private ServiceUtil(FragmentActivity activity) {
+        this.logUtil = LogUtil.getInstance(activity.getApplication());
         this.activity = activity;
         this.configModel = ConfigModel.getInstance(activity.getApplication());
     }
@@ -45,7 +48,7 @@ public class ServiceUtil {
 
 
     public void startServices() {
-        LogUtil.d("启动服务");
+        logUtil.d("启动服务");
 
         // 短信监听器
         smsObserver = new SmsObserver(activity.getApplication(), new Handler());
@@ -63,7 +66,7 @@ public class ServiceUtil {
     }
 
     public void stopServices() {
-        LogUtil.d("停止服务");
+        logUtil.d("停止服务");
 
         // 短信监听器
         activity.getContentResolver().unregisterContentObserver(smsObserver);

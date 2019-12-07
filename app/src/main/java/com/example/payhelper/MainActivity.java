@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private ConfigModel configModel;
 
+    private LogUtil logUtil;
+
     private NetworkReceiver networkReceiver;
 
     private static final int PERMISSION_CODE = 123;
@@ -32,14 +34,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Manifest.permission.INTERNET,
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.RECEIVE_SMS,
-            Manifest.permission.READ_SMS
+            Manifest.permission.READ_SMS,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        configModel = ViewModelProviders.of(this).get(ConfigModel.class);
+        logUtil = LogUtil.getInstance(getApplication());
+
         configModel = ConfigModel.getInstance(getApplication());
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setConfig(configModel);
@@ -58,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void registerReceivers() {
-        LogUtil.d("注册接收器");
+        logUtil.d("注册接收器");
 
         // 网络状态接收器
         IntentFilter intentFilter=new IntentFilter();
@@ -68,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void unregisterReceivers() {
-        LogUtil.d("卸载接收器");
+        logUtil.d("卸载接收器");
 
         // 网络状态接收器
         unregisterReceiver(networkReceiver);
@@ -85,14 +89,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     public void onGotoPermission(View v) {
-
         PermissionUtil.getInstance(getApplicationContext()).gotoPermission();
+    }
+
+    public void onMoveLogFile(View v) {
+        logUtil.move();
     }
 
     private void checkPermission() {
         boolean hasPermissions = EasyPermissions.hasPermissions(this, PERMISSIONS);
         configModel.getPermissionAvailable().setValue(hasPermissions);
-        LogUtil.d("检查权限状态=" + String.valueOf(hasPermissions));
+        logUtil.d("检查权限状态=" + String.valueOf(hasPermissions));
 
         if (!hasPermissions) {
             EasyPermissions.requestPermissions(this, "权限不足,前往设置", PERMISSION_CODE, PERMISSIONS);
@@ -108,17 +115,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        LogUtil.d("同意权限");
+        logUtil.d("同意权限");
         configModel.getPermissionAvailable().setValue(true);
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        LogUtil.d("拒绝权限");
+        logUtil.d("拒绝权限");
 
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
             new AppSettingsDialog.Builder(this).build().show();
-            LogUtil.e("引导设置 申请权限" );
+            logUtil.e("引导设置 申请权限" );
         }
     }
 }

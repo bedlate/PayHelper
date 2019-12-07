@@ -11,7 +11,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.payhelper.R;
-import com.example.payhelper.util.LogUtil;
 
 public class ConfigModel extends AndroidViewModel {
 
@@ -21,12 +20,13 @@ public class ConfigModel extends AndroidViewModel {
     private MutableLiveData<Boolean> permissionAvailable;
     private MutableLiveData<Long> lastDate;
     private MutableLiveData<Boolean> isRunning;
+    private MutableLiveData<Boolean> logEnable;
 
     private final String CONFIG_FILE = "config";
 
     private Application application;
-    private String apiKey, apiDefaultValue, usernameKey, usernameDefaultValue, smsEnableKey, lastDateKey, lastDateDefaultValue;
-    private Boolean smsEnableDefaultValue;
+    private String apiKey, apiDefaultValue, usernameKey, usernameDefaultValue, smsEnableKey, lastDateKey, lastDateDefaultValue, logEnableKey;
+    private Boolean smsEnableDefaultValue, logEnableDefaultValue;
 
     private static ConfigModel instance;
 
@@ -55,6 +55,7 @@ public class ConfigModel extends AndroidViewModel {
         this.permissionAvailable = new MutableLiveData<Boolean>();
         this.lastDate = new MutableLiveData<Long>();
         this.isRunning = new MutableLiveData<Boolean>();
+        this.logEnable = new MutableLiveData<Boolean>();
 
         this.apiKey = resources.getString(R.string.api_key);
         this.apiDefaultValue = resources.getString(R.string.api_default_value);
@@ -64,6 +65,8 @@ public class ConfigModel extends AndroidViewModel {
         this.smsEnableDefaultValue = resources.getBoolean(R.bool.sms_enable_default_value);
         this.lastDateKey = resources.getString(R.string.last_date_key);
         this.lastDateDefaultValue = resources.getString(R.string.last_date_default_value);
+        this.logEnableKey = resources.getString(R.string.log_enable_key);
+        this.logEnableDefaultValue = resources.getBoolean(R.bool.log_enable_default_value);
 
         fetchConfig();
     }
@@ -96,6 +99,10 @@ public class ConfigModel extends AndroidViewModel {
         return isRunning;
     }
 
+    public MutableLiveData<Boolean> getLogEnable() {
+        return logEnable;
+    }
+
     private void fetchConfig() {
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
 
@@ -108,16 +115,10 @@ public class ConfigModel extends AndroidViewModel {
 
         lastDate.setValue(Long.parseLong(shp.getString(lastDateKey, lastDateDefaultValue)));
         isRunning.setValue(false);
-
-        LogUtil.d("fetchConfig: api=" + api.getValue()
-                + ", username=" + username.getValue()
-                + ", sms_enable=" + smsEnable.getValue().toString()
-                + ", last_date=" + lastDate.getValue().toString()
-        );
+        logEnable.setValue(shp.getBoolean(logEnableKey, logEnableDefaultValue));
     }
 
     public void saveConfig() {
-        LogUtil.d("saveConfig: api=" + api.getValue() + ", username=" + username.getValue() + ", sms_enable=" + smsEnable.getValue().toString());
 
         SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = shp.edit();
@@ -136,6 +137,19 @@ public class ConfigModel extends AndroidViewModel {
         SharedPreferences.Editor editor = shp.edit();
         editor.putString(lastDateKey, String.valueOf(date));
         editor.commit();
+    }
+
+    public void toggleLogStatus() {
+        boolean status = !logEnable.getValue();
+
+        SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = shp.edit();
+
+        editor.putBoolean(logEnableKey, status);
+
+        editor.commit();
+
+        logEnable.setValue(status);
     }
 
 }

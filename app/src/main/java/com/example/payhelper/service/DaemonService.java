@@ -16,15 +16,18 @@ public class DaemonService extends Service {
 
     private final static int FOREGROUND_ID = 1000;
 
+    private LogUtil logUtil;
+
     @Override
     public void onCreate() {
-        LogUtil.d("创建守护进程");
+        logUtil = LogUtil.getInstance(getApplication());
+        logUtil.d("创建守护进程");
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtil.d("启动守护进程");
+        logUtil.d("启动守护进程");
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.mipmap.ic_launcher);
@@ -48,7 +51,7 @@ public class DaemonService extends Service {
 
     @Override
     public void onDestroy() {
-        LogUtil.d("摧毁守护进程");
+        logUtil.d("摧毁守护进程");
         super.onDestroy();
     }
 }

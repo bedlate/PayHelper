@@ -27,6 +27,8 @@ public class SmsUtil {
     public final static Uri SMS_URI = Uri.parse("content://sms/");
     public final static String SMS_RAW_URI = "content://sms/raw";
 
+    private LogUtil logUtil;
+
     private ConfigModel configModel;
     private ContentResolver contentResolver;
     private OkHttpClient client;
@@ -45,6 +47,7 @@ public class SmsUtil {
     }
 
     private SmsUtil(Application application) {
+        this.logUtil = LogUtil.getInstance(application);
         this.configModel = ConfigModel.getInstance(application);
         this.contentResolver = application.getContentResolver();
 
@@ -57,7 +60,7 @@ public class SmsUtil {
 //            return;
 //        }
 
-        LogUtil.d("收到短信");
+        logUtil.d("收到短信");
 
         // "_id","thread_id","address","person","date","type","body"
         // date address body
@@ -118,7 +121,7 @@ public class SmsUtil {
             jsonObject.put("slug", slug);
             jsonObject.put("action", action);
             jsonObject.put("data", data);
-            LogUtil.d("request:" + jsonObject.toString());
+            logUtil.d("request:" + jsonObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,11 +148,11 @@ public class SmsUtil {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     if (!response.isSuccessful()) {
-                        LogUtil.d("response(fail): " + response);
+                        logUtil.d("response(fail): " + response);
                     } else {
                         String json = response.body().string(); // string()仅能调用一次
 
-                        LogUtil.d("response(success): " + json);
+                        logUtil.d("response(success): " + json);
 
                         JSONObject res = new JSONObject(json);
                         int resCode = res.getInt("code");
@@ -160,13 +163,13 @@ public class SmsUtil {
                                 configModel.saveLastDate(nd);
                             }
                         } else {
-                            LogUtil.e(resMessage);
+                            logUtil.e(resMessage);
                         }
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LogUtil.e("response(exception): " + e);
+                    logUtil.e("response(exception): " + e);
                 }
             }
         });

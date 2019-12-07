@@ -21,4 +21,8 @@
     <string name="stop_text">停止服务</string>
     <string name="is_running_text">服务状态</string>
     <string name="goto_permission_text">设置权限</string>
+    <string name="log_enable_key">log_enable</string>
+    <string name="log_enable_text">启用日志</string>
+    <string name="log_disable_text">禁用日志</string>
+    <string name="log_move_text">导出日志</string>
 </resources>

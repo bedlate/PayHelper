@@ -12,8 +12,10 @@ import com.example.payhelper.util.NetworkUtil;
 public class NetworkReceiver extends BroadcastReceiver {
 
     private ConfigModel configModel;
+    private LogUtil logUtil;
 
     public NetworkReceiver(Application application) {
+        logUtil = LogUtil.getInstance(application);
         configModel = ConfigModel.getInstance(application);
     }
 
@@ -24,6 +26,6 @@ public class NetworkReceiver extends BroadcastReceiver {
 
         configModel.getNetworkAvailable().setValue(isConnected);
 
-        LogUtil.d("网络状态:" + configModel.getNetworkAvailable().getValue().toString());
+        logUtil.d("网络状态:" + configModel.getNetworkAvailable().getValue().toString());
     }
 }
