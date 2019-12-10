@@ -141,18 +141,19 @@ public class SmsUtil {
 
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
+                logUtil.e("请求异常: " + e);
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     if (!response.isSuccessful()) {
-                        logUtil.d("response(fail): " + response);
+                        logUtil.d("响应失败: " + response);
                     } else {
                         String json = response.body().string(); // string()仅能调用一次
 
-                        logUtil.d("response(success): " + json);
+                        logUtil.d("响应数据: " + json);
 
                         JSONObject res = new JSONObject(json);
                         int resCode = res.getInt("code");
@@ -163,13 +164,13 @@ public class SmsUtil {
                                 configModel.saveLastDate(nd);
                             }
                         } else {
-                            logUtil.e(resMessage);
+                            logUtil.e("响应失败: " + resMessage);
                         }
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    logUtil.e("response(exception): " + e);
+//                    e.printStackTrace();
+                    logUtil.e("响应异常: " + e);
                 }
             }
         });

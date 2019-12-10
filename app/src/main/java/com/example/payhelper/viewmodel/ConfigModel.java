@@ -12,6 +12,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.payhelper.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ConfigModel extends AndroidViewModel {
 
     private MutableLiveData<String> api, username;
@@ -29,6 +32,23 @@ public class ConfigModel extends AndroidViewModel {
     private Boolean smsEnableDefaultValue, logEnableDefaultValue;
 
     private static ConfigModel instance;
+
+    public String toJson() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("api", api.getValue());
+            jsonObject.put("username", username.getValue());
+            jsonObject.put("sms_enable", smsEnable.getValue());
+            jsonObject.put("network_available", networkAvailable.getValue());
+            jsonObject.put("permission_available", permissionAvailable.getValue());
+            jsonObject.put("last_date", lastDate.getValue());
+            jsonObject.put("is_running", isRunning.getValue());
+            jsonObject.put("log_enable", logEnable.getValue());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
 
     public static ConfigModel getInstance(Application application) {
         if (null == instance) {
@@ -127,8 +147,6 @@ public class ConfigModel extends AndroidViewModel {
         editor.putString(usernameKey, username.getValue());
         editor.putBoolean(smsEnableKey, smsEnable.getValue());
         editor.commit();
-
-        Toast.makeText(this.application.getApplicationContext(), "保存成功", Toast.LENGTH_SHORT).show();
     }
 
     public void saveLastDate(long date) {

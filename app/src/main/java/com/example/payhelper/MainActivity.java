@@ -1,9 +1,13 @@
 package com.example.payhelper;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +28,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private ConfigModel configModel;
+    private ActivityMainBinding binding;
+    private InputMethodManager inputMethodManager;
 
     private LogUtil logUtil;
 
@@ -44,8 +50,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         logUtil = LogUtil.getInstance(getApplication());
 
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
         configModel = ConfigModel.getInstance(getApplication());
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setConfig(configModel);
         binding.setLifecycleOwner(this);
 
@@ -59,6 +67,28 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onDestroy();
 
         this.unregisterReceivers();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            hiddenInput();
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+    // 隐藏输入法
+    private void hiddenInput() {
+        View view = getCurrentFocus();
+        if(null != view && null != view.getWindowToken()){
+
+            view.clearFocus();
+
+            if (inputMethodManager.isActive()) {
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
     }
 
     private void registerReceivers() {
@@ -76,6 +106,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         // 网络状态接收器
         unregisterReceiver(networkReceiver);
+    }
+
+    public void onSaveConfig(View v) {
+        logUtil.d("保存配置:" + configModel.toJson());
+
+        hiddenInput();
+
+        configModel.saveConfig();
+
+        Toast.makeText(getApplicationContext(), "保存成功", Toast.LENGTH_SHORT).show();
     }
 
     public void onToggleService(View v) {
