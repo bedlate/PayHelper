@@ -10,9 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 
-import com.example.payhelper.databinding.ActivityMainBinding;
 import com.example.payhelper.receiver.NetworkReceiver;
 import com.example.payhelper.util.LogUtil;
 import com.example.payhelper.viewmodel.ConfigModel;
@@ -24,11 +22,9 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
-    private ConfigModel configModel;
-    private ActivityMainBinding binding;
-    private InputMethodManager inputMethodManager;
-
     private LogUtil logUtil;
+    private ConfigModel configModel;
+    private InputMethodManager inputMethodManager;
 
     private NetworkReceiver networkReceiver;
 
@@ -50,8 +46,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         configModel = ConfigModel.getInstance(getApplication());
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        binding.setLifecycleOwner(this);
+
+        setContentView(R.layout.activity_main);
 
         this.checkPermission();
 
