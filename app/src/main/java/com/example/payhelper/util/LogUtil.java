@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.payhelper.viewmodel.ConfigModel;
+import com.example.payhelper.viewmodel.LogModel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,9 +27,12 @@ public class LogUtil {
 
     private ConfigModel configModel;
 
+    private LogModel logModel;
+
     private LogUtil(Application application) {
         this.application = application;
         this.configModel = ConfigModel.getInstance(application);
+        this.logModel = LogModel.getInstance(application);
     }
 
     public static LogUtil getInstance(Application application) {
@@ -44,9 +48,13 @@ public class LogUtil {
 
     public void write(String msg) {
         try {
+            String now = new SimpleDateFormat("HH:mm:ss").format(new Date());
+            msg = "\n" + now + ": " + msg;
+
+            // 记录到内存
+            logModel.appendLog(msg);
+
             if (configModel.getLogEnable().getValue()) {
-                String now = new SimpleDateFormat("HH:mm:ss").format(new Date());
-                msg = "\n" + now + ": " + msg;
                 FileOutputStream outputStream = application.openFileOutput(getFileName(), Context.MODE_APPEND);
                 outputStream.write(msg.getBytes());
                 outputStream.close();

@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -51,7 +52,11 @@ public class SmsUtil {
         this.configModel = ConfigModel.getInstance(application);
         this.contentResolver = application.getContentResolver();
 
-        this.client = new OkHttpClient();
+        this.client = new OkHttpClient.Builder()
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .build();
     }
 
     public void fetchData() {
