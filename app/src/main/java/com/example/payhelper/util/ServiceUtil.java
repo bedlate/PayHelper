@@ -1,6 +1,7 @@
 package com.example.payhelper.util;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.os.Handler;
 
@@ -15,7 +16,7 @@ public class ServiceUtil {
 
     private static ServiceUtil instance;
 
-    private Activity activity;
+    private Application application;
 
     private LogUtil logUtil;
 
@@ -25,25 +26,22 @@ public class ServiceUtil {
     private Intent daemonIntent;
     private SmsObserver smsObserver;
 
-    private ServiceUtil(FragmentActivity activity) {
-        this.logUtil = LogUtil.getInstance(activity.getApplication());
-        this.activity = activity;
-        this.configModel = ConfigModel.getInstance(activity.getApplication());
+    private ServiceUtil(Application application) {
+        this.application = application;
+
+        this.logUtil = LogUtil.getInstance(application);
+        this.configModel = ConfigModel.getInstance(application);
     }
 
-    public static ServiceUtil getInstance(FragmentActivity activity) {
+    public static ServiceUtil getInstance(Application application) {
         if (null == instance) {
             synchronized (ServiceUtil.class) {
                 if (null == instance) {
-                    instance = new ServiceUtil(activity);
+                    instance = new ServiceUtil(application);
                 }
             }
         }
         return instance;
-    }
-
-    public ConfigModel getConfigModel() {
-        return this.configModel;
     }
 
 
@@ -51,16 +49,16 @@ public class ServiceUtil {
         logUtil.d("启动服务");
 
         // 短信监听器
-        smsObserver = new SmsObserver(activity.getApplication(), new Handler());
-        activity.getContentResolver().registerContentObserver(SmsUtil.SMS_URI, true, smsObserver);
+        smsObserver = new SmsObserver(application, new Handler());
+        application.getContentResolver().registerContentObserver(SmsUtil.SMS_URI, true, smsObserver);
 
         // 启动服务: 后台主动接收短信
-        smsIntent = new Intent(activity, SmsService.class);
-        activity.startService(smsIntent);
+        smsIntent = new Intent(application, SmsService.class);
+        application.startService(smsIntent);
 
         // 守护进程
-        daemonIntent = new Intent(activity.getApplicationContext(), DaemonService.class);
-        activity.startService(daemonIntent);
+        daemonIntent = new Intent(application, DaemonService.class);
+        application.startService(daemonIntent);
 
         configModel.getIsRunning().setValue(true);
     }
@@ -69,11 +67,11 @@ public class ServiceUtil {
         logUtil.d("停止服务");
 
         // 短信监听器
-        activity.getContentResolver().unregisterContentObserver(smsObserver);
+        application.getContentResolver().unregisterContentObserver(smsObserver);
         // 停止短信后台服务
-        activity.stopService(smsIntent);
+        application.stopService(smsIntent);
         // 停止守护进程服务
-        activity.stopService(daemonIntent);
+        application.stopService(daemonIntent);
 
         configModel.getIsRunning().postValue(false);
 

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class LogModel extends AndroidViewModel {
 
     private MutableLiveData<ArrayList<String>> logs;
+    private MutableLiveData<String> logText;
 
     private static LogModel instance;
 
@@ -18,9 +19,7 @@ public class LogModel extends AndroidViewModel {
         super(application);
 
         this.logs = new MutableLiveData<ArrayList<String>>();
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("");
-        this.getLogs().postValue(list);
+        this.logText = new MutableLiveData<String>();
     }
 
     public static LogModel getInstance(Application application) {
@@ -34,9 +33,9 @@ public class LogModel extends AndroidViewModel {
         return instance;
     }
 
-    public String toText() {
+    private String toText(ArrayList<String> list) {
         String ret = "";
-        for (String msg: this.getLogs().getValue()) {
+        for (String msg: list) {
             ret += msg;
         }
         return ret;
@@ -46,13 +45,23 @@ public class LogModel extends AndroidViewModel {
         return logs;
     }
 
+    public MutableLiveData<String> getLogText() {
+        return logText;
+    }
+
     public void appendLog(String msg) {
         ArrayList<String> list = this.getLogs().getValue();
+
+        if (null == list) {
+            list = new ArrayList<String>();
+        }
+
         int length = list.size();
-        if (length > 5) {
+        if (length > 100) {
             list.remove(0);
         }
         list.add(msg);
         this.getLogs().postValue(list);
+        this.getLogText().postValue(toText(list));
     }
 }

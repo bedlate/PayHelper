@@ -68,13 +68,35 @@ public class LogUtil {
         try {
             File dir = new File(application.getFilesDir(), "");
             File files[] = dir.listFiles();
+
+            File externalDir = new File(application.getExternalFilesDir(null), "");
+            File externalFiles[] = externalDir.listFiles();
+
+            String msg = "没有日志需要清理哦";
+            String exceptFile = getFileName();
+            int number = 0;
+
             for (int i = 0; i < files.length; i++) {
                 String fileName = files[i].getName();
-                if (!fileName.equals(getFileName()) && fileName.startsWith(LOG_FILE)) {
+                if (!fileName.equals(exceptFile) && fileName.startsWith(LOG_FILE)) {
                     files[i].delete();
+                    number++;
                 }
             }
-            Toast.makeText(application.getApplicationContext(), "清理完成", Toast.LENGTH_LONG).show();
+
+            for (int i = 0; i < externalFiles.length; i++) {
+                String fileName = externalFiles[i].getName();
+                if (!fileName.equals(exceptFile) && fileName.startsWith(LOG_FILE)) {
+                    externalFiles[i].delete();
+                    number++;
+                }
+            }
+
+            if (number > 0) {
+                msg = "共清理" + number + "个日志文件";
+            }
+
+            Toast.makeText(application.getApplicationContext(), msg, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(application.getApplicationContext(), "清理失败," + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -82,8 +104,7 @@ public class LogUtil {
 
     }
 
-    public void move() {
-        d("开始复制");
+    public void export() {
 
         boolean logEnable = configModel.getLogEnable().getValue();
 
@@ -115,8 +136,6 @@ public class LogUtil {
                 if (logEnable) {
                     configModel.getLogEnable().postValue(true);
                 }
-
-                d("复制完成");
 
                 Toast.makeText(application.getApplicationContext(), "复制完成,日志路径" + targetFile.getAbsolutePath().toString(), Toast.LENGTH_LONG).show();
 

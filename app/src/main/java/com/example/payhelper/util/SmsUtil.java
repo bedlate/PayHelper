@@ -61,11 +61,12 @@ public class SmsUtil {
 
     public void fetchData() {
         // todo: 暂时隐藏是否启用短信服务
-//        if (!this.configModel.getSmsEnable().getValue()) {
-//            return;
-//        }
+        if (!this.configModel.getSmsEnable().getValue()) {
+            logUtil.e("短信监控未开启");
+            return;
+        }
 
-        logUtil.d("收到短信");
+        logUtil.d("查看短信");
 
         // "_id","thread_id","address","person","date","type","body"
         // date address body
@@ -126,7 +127,7 @@ public class SmsUtil {
             jsonObject.put("slug", slug);
             jsonObject.put("action", action);
             jsonObject.put("data", data);
-            logUtil.d("request:" + jsonObject.toString());
+            logUtil.d("请求数据:" + jsonObject.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

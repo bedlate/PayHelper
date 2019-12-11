@@ -137,15 +137,32 @@ public class ConfigModel extends AndroidViewModel {
         logEnable.setValue(shp.getBoolean(logEnableKey, logEnableDefaultValue));
     }
 
-    public void saveConfig() {
+    public void saveConfig(JSONObject jsonObject) {
+        try {
+            SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = shp.edit();
 
-        SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = shp.edit();
+            if (jsonObject.has(apiKey)) {
+                this.getApi().setValue(jsonObject.getString(apiKey));
+                editor.putString(apiKey, jsonObject.getString(apiKey));
+            }
+            if (jsonObject.has(usernameKey)) {
+                this.getUsername().setValue(jsonObject.getString(usernameKey));
+                editor.putString(usernameKey, jsonObject.getString(usernameKey));
+            }
+            if (jsonObject.has(smsEnableKey)) {
+                this.getSmsEnable().setValue(jsonObject.getBoolean(smsEnableKey));
+                editor.putBoolean(smsEnableKey, jsonObject.getBoolean(smsEnableKey));
+            }
+            if (jsonObject.has(logEnableKey)) {
+                this.logEnable.setValue(jsonObject.getBoolean(logEnableKey));
+                editor.putBoolean(logEnableKey, jsonObject.getBoolean(logEnableKey));
+            }
 
-        editor.putString(apiKey, api.getValue());
-        editor.putString(usernameKey, username.getValue());
-        editor.putBoolean(smsEnableKey, smsEnable.getValue());
-        editor.commit();
+            editor.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void saveLastDate(long date) {
@@ -154,19 +171,6 @@ public class ConfigModel extends AndroidViewModel {
         SharedPreferences.Editor editor = shp.edit();
         editor.putString(lastDateKey, String.valueOf(date));
         editor.commit();
-    }
-
-    public void toggleLogStatus() {
-        boolean status = !logEnable.getValue();
-
-        SharedPreferences shp = this.application.getSharedPreferences(CONFIG_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = shp.edit();
-
-        editor.putBoolean(logEnableKey, status);
-
-        editor.commit();
-
-        logEnable.setValue(status);
     }
 
 }

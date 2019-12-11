@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebSettings;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +15,6 @@ import androidx.databinding.DataBindingUtil;
 import com.example.payhelper.databinding.ActivityMainBinding;
 import com.example.payhelper.receiver.NetworkReceiver;
 import com.example.payhelper.util.LogUtil;
-import com.example.payhelper.util.PermissionUtil;
-import com.example.payhelper.util.ServiceUtil;
 import com.example.payhelper.viewmodel.ConfigModel;
 
 import java.util.List;
@@ -45,9 +41,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
-    private long clickTime = 0;
-    private int clickCount = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,14 +51,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         configModel = ConfigModel.getInstance(getApplication());
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        binding.setConfig(configModel);
         binding.setLifecycleOwner(this);
 
         this.checkPermission();
 
         this.registerReceivers();
 
-        this.loadWebView();
     }
 
     @Override
@@ -82,35 +73,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
 
         return super.onTouchEvent(event);
-    }
-
-    public void onShowRealView(View view) {
-        long currentTime = System.currentTimeMillis();
-        if (0 == clickTime || (currentTime - clickTime < 2000)) {
-            clickCount++;
-        }
-        clickTime = currentTime;
-        if (5 <= clickCount) {
-            binding.webviweLayout.setVisibility(View.GONE);
-        }
-    }
-
-    private void loadWebView() {
-        binding.webviweLayout.setVisibility(View.INVISIBLE);
-
-        WebSettings webSettings = binding.webView.getSettings();
-        webSettings.setJavaScriptEnabled(false);
-        webSettings.setUseWideViewPort(true);
-        webSettings.setLoadWithOverviewMode(true);
-
-        // 禁止点击
-        binding.webView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
-        binding.webView.loadUrl("https://cftweb.3g.qq.com/qqappstore/index");
     }
 
     // 隐藏输入法
@@ -141,38 +103,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         // 网络状态接收器
         unregisterReceiver(networkReceiver);
-    }
-
-    public void onSaveConfig(View v) {
-        logUtil.d("保存配置:" + configModel.toJson());
-
-        hiddenInput();
-
-        configModel.saveConfig();
-
-        Toast.makeText(getApplicationContext(), "保存成功", Toast.LENGTH_SHORT).show();
-    }
-
-    public void onToggleService(View v) {
-        boolean isRunning = configModel.getIsRunning().getValue();
-        if (isRunning) {
-            ServiceUtil.getInstance(this).stopServices();
-
-        } else {
-            ServiceUtil.getInstance(this).startServices();
-        }
-    }
-
-    public void onGotoPermission(View v) {
-        PermissionUtil.getInstance(getApplicationContext()).gotoPermission();
-    }
-
-    public void onMoveLogFile(View v) {
-        logUtil.move();
-    }
-
-    public void onClearLogFile(View v) {
-        logUtil.clear();
     }
 
     private void checkPermission() {

@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">应用市场</string>
     <string name="app_description">请锁定该应用,保持运行状态!</string>
-    <string name="app_version">1.0.0</string>
+    <string name="app_version">1.0.1</string>
     <string name="save_text">保存配置</string>
     <string name="api_label">API地址</string>
     <string name="api_hint">请输入API地址</string>
     <string name="api_key">api</string>
-<!--    <string name="api_default_value">http://192.168.1.100:8000</string>-->
+    <!--    <string name="api_default_value">http://192.168.1.100:8000</string>-->
     <string name="username_label">用户名</string>
     <string name="username_hint">请输入用户名</string>
     <string name="username_key">username</string>
@@ -22,8 +22,9 @@
     <string name="is_running_text">服务状态</string>
     <string name="goto_permission_text">设置权限</string>
     <string name="log_enable_key">log_enable</string>
-    <string name="log_enable_text">启用日志</string>
+    <string name="log_enable_text">启用文件日志</string>
     <string name="log_disable_text">禁用日志</string>
     <string name="log_move_text">导出日志</string>
     <string name="log_clear_text">清理日志</string>
+    <string name="log_view_text">查看日志</string>
 </resources>

@@ -26,6 +26,6 @@ public class NetworkReceiver extends BroadcastReceiver {
 
         configModel.getNetworkAvailable().setValue(isConnected);
 
-        logUtil.d("网络状态:" + configModel.getNetworkAvailable().getValue().toString());
+        logUtil.d("网络状态变化:" + configModel.getNetworkAvailable().getValue().toString());
     }
 }
