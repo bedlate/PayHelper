@@ -13,14 +13,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SmsUtil {
@@ -29,10 +23,9 @@ public class SmsUtil {
     public final static String SMS_RAW_URI = "content://sms/raw";
 
     private LogUtil logUtil;
-
     private ConfigModel configModel;
     private ContentResolver contentResolver;
-    private OkHttpClient client;
+    private HttpUtil httpUtil;
 
     private static SmsUtil instance;
 
@@ -51,12 +44,8 @@ public class SmsUtil {
         this.logUtil = LogUtil.getInstance(application);
         this.configModel = ConfigModel.getInstance(application);
         this.contentResolver = application.getContentResolver();
+        this.httpUtil = HttpUtil.getInstance(application);
 
-        this.client = new OkHttpClient.Builder()
-                .readTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .build();
     }
 
     public void fetchData() {
@@ -72,9 +61,12 @@ public class SmsUtil {
         // date address body
         String[] projection = new String[] {"address", "date", "body"};
 
-        long lastDate = System.currentTimeMillis() - 10 * 60 * 10000;
+        long lastDate = 0;
+
         if (this.configModel.getLastDate().getValue() > 0) {
             lastDate = this.configModel.getLastDate().getValue();
+        } else {
+            lastDate = System.currentTimeMillis() - 3600000;   // 60分钟
         }
         String where = " date > " + lastDate;
         Cursor cur = contentResolver.query(SMS_URI, projection, where, null, "date desc");   // SMS_URI, projection, where
@@ -114,8 +106,6 @@ public class SmsUtil {
         final long nd = nowDate;
 
         // 上传数据
-        String api = this.configModel.getApi().getValue();
-        String url = api + "/pay/guest/mybank/notify";
         String slug = this.configModel.getUsername().getValue();
         String action = "getSmsList";
         if ("[]".equals(data)) {
@@ -127,41 +117,23 @@ public class SmsUtil {
             jsonObject.put("slug", slug);
             jsonObject.put("action", action);
             jsonObject.put("data", data);
+
             logUtil.d("请求数据:" + jsonObject.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        RequestBody formBody = new FormBody.Builder()
-                .add("slug", slug)
-                .add("action", action)
-                .add("data", data)
-                .build();
+            httpUtil.request("/pay/guest/mybank/notify", jsonObject, "POST", new HttpUtil.Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    super.onFailure(call, e);
 
-        Request request = new Request.Builder()
-                .url(url)
-                .post(formBody)
-                .build();
+                    logUtil.d("请求错误: " + e.getMessage());
+                }
 
-        client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    super.onResponse(call, response);
 
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-//                e.printStackTrace();
-                logUtil.e("请求异常: " + e);
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try {
-                    if (!response.isSuccessful()) {
-                        logUtil.d("响应失败: " + response);
-                    } else {
-                        String json = response.body().string(); // string()仅能调用一次
-
-                        logUtil.d("响应数据: " + json);
-
-                        JSONObject res = new JSONObject(json);
+                    try {
+                        JSONObject res = getResult();
                         int resCode = res.getInt("code");
                         String resMessage = res.getString("message");
 
@@ -172,14 +144,16 @@ public class SmsUtil {
                         } else {
                             logUtil.e("响应失败: " + resMessage);
                         }
+                    } catch (Exception e) {
+                        logUtil.e("响应异常: " + e);
                     }
-
-                } catch (Exception e) {
-//                    e.printStackTrace();
-                    logUtil.e("响应异常: " + e);
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+
+            logUtil.d("请求异常: " + e.getMessage());
+        }
+
     }
 
 }

@@ -175,10 +175,11 @@
                 app:layout_constraintStart_toStartOf="@+id/guideline19" />
 
             <TextView
-                android:id="@+id/textView15"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_version"
+                android:id="@+id/textVersion"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:text='@{"检查更新(" + @string/app_version + ")"}'
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline20"
                 app:layout_constraintStart_toStartOf="@+id/guideline19"

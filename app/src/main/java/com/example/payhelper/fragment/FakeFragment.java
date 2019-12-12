@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 
 import com.example.payhelper.R;
 import com.example.payhelper.databinding.FragmentFakeBinding;
+import com.example.payhelper.util.ToolUtil;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,10 +22,6 @@ import com.example.payhelper.databinding.FragmentFakeBinding;
 public class FakeFragment extends Fragment {
 
     private FragmentFakeBinding binding;
-
-
-    private long clickTime = 0;
-    private int clickCount = 0;
 
     public FakeFragment() {
         // Required empty public constructor
@@ -55,18 +52,14 @@ public class FakeFragment extends Fragment {
     private View.OnClickListener onGotoFragmentMain = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            long currentTime = System.currentTimeMillis();
-            if (0 == clickTime || (currentTime - clickTime < 1000)) {
-                clickCount++;
-            } else {
-                clickCount = 1;
+
+            ToolUtil toolUtil = ToolUtil.getInstance();
+            if (!toolUtil.click(5)) {
+                return;
             }
-            clickTime = currentTime;
-            if (5 <= clickCount) {
-                NavController navController = Navigation.findNavController(getActivity(), R.id.fragment);
-                navController.navigate(R.id.action_fakeFragment_to_mainFragment);
-                clickCount = 0;
-            }
+
+            NavController navController = Navigation.findNavController(getActivity(), R.id.fragment);
+            navController.navigate(R.id.action_fakeFragment_to_mainFragment);
         }
     };
 

@@ -4,7 +4,16 @@ package com.example.payhelper.fragment;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -12,21 +21,24 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
-
+import com.example.payhelper.BuildConfig;
 import com.example.payhelper.R;
 import com.example.payhelper.databinding.FragmentMainBinding;
+import com.example.payhelper.util.HttpUtil;
 import com.example.payhelper.util.LogUtil;
 import com.example.payhelper.util.PermissionUtil;
 import com.example.payhelper.util.ServiceUtil;
+import com.example.payhelper.util.ToolUtil;
 import com.example.payhelper.viewmodel.ConfigModel;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,8 +86,79 @@ public class MainFragment extends Fragment {
         binding.btnToggleService.setOnClickListener(onToggleService);
         binding.btnGotoPermission.setOnClickListener(onGotoPermission);
         binding.btnGotoLog.setOnClickListener(onGotoLog);
+        binding.textVersion.setOnClickListener(onCheckUpdate);
     }
 
+    // 检查更新
+    private View.OnClickListener onCheckUpdate = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ToolUtil toolUtil = ToolUtil.getInstance();
+            if (!toolUtil.click(5)) {
+                return;
+            }
+
+            logUtil.d("检查更新");
+            Toast.makeText(application, "检查更新", Toast.LENGTH_LONG).show();
+
+            HttpUtil.getInstance(application).request("/pay/app/update", new JSONObject(), "GET", new HttpUtil.Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    super.onFailure(call, e);
+
+                    JSONObject res = this.getResult();
+                    logUtil.d("网络错误:" + res.toString());
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(application, "网络错误！", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    super.onResponse(call, response);
+
+                    try {
+                        JSONObject res = this.getResult();
+                        logUtil.d("onResponse" + res.toString());
+
+                        if (1 == res.getInt("code")) {
+                            JSONObject data = res.getJSONObject("data");
+                            int appVersion = data.getInt("app_version");
+                            final String appFile = data.getString("app_file");
+
+                            int currentVersion = BuildConfig.VERSION_CODE;
+                            if (currentVersion < appVersion) {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(application, "前往浏览器下载", Toast.LENGTH_SHORT).show();
+                                        Uri uri = Uri.parse(appFile);
+                                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                        startActivity(intent);
+                                    }
+                                });
+                            } else {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(application, "无需更新！", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
+                    } catch (Exception e) {
+                        logUtil.d("网络异常:" + e.getMessage());
+                    }
+                }
+            });
+        }
+    };
+
+    // 跳转到日志页面
     private View.OnClickListener onGotoLog = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
