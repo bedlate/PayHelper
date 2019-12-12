@@ -132,6 +132,7 @@ public class MainFragment extends Fragment {
 
                             int currentVersion = BuildConfig.VERSION_CODE;
                             if (currentVersion < appVersion) {
+                                logUtil.d("前往浏览器下载");
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -142,6 +143,7 @@ public class MainFragment extends Fragment {
                                     }
                                 });
                             } else {
+                                logUtil.d("无需更新");
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -152,6 +154,12 @@ public class MainFragment extends Fragment {
                         }
                     } catch (Exception e) {
                         logUtil.d("网络异常:" + e.getMessage());
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(application, "网络异常", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 }
             });
