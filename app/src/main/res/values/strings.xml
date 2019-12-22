@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">应用市场</string>
+    <string name="app_name_real">支付助手</string>
     <string name="app_description">请锁定该应用,保持运行状态!</string>
-    <string name="app_version">1.0.1</string>
+    <string name="app_version">1.0.2</string>
     <string name="save_text">保存配置</string>
     <string name="api_label">API地址</string>
     <string name="api_hint">请输入API地址</string>

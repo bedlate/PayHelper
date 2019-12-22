@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/mainFragment"
         android:name="com.example.payhelper.fragment.MainFragment"
-        android:label="fragment_main"
-        tools:layout="@layout/fragment_main" >
+        android:label="@string/app_name_real"
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_logFragment"
             app:destination="@id/logFragment" />
@@ -17,8 +17,8 @@
     <fragment
         android:id="@+id/logFragment"
         android:name="com.example.payhelper.fragment.LogFragment"
-        android:label="fragment_log"
-        tools:layout="@layout/fragment_log" >
+        android:label="@string/log_view_text"
+        tools:layout="@layout/fragment_log">
         <action
             android:id="@+id/action_logFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
@@ -26,8 +26,8 @@
     <fragment
         android:id="@+id/fakeFragment"
         android:name="com.example.payhelper.fragment.FakeFragment"
-        android:label="fragment_fake"
-        tools:layout="@layout/fragment_fake" >
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_fake">
         <action
             android:id="@+id/action_fakeFragment_to_mainFragment"
             app:destination="@id/mainFragment" />

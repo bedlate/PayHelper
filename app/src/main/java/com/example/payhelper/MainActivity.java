@@ -10,6 +10,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.payhelper.receiver.NetworkReceiver;
 import com.example.payhelper.util.LogUtil;
@@ -34,7 +37,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             Manifest.permission.ACCESS_NETWORK_STATE,
             Manifest.permission.RECEIVE_SMS,
             Manifest.permission.READ_SMS,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//            Manifest.permission.FOREGROUND_SERVICE,
     };
 
     @Override
@@ -49,10 +53,21 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
         setContentView(R.layout.activity_main);
 
+        // 导航返回键
+        NavController controller = Navigation.findNavController(this, R.id.fragment);
+        NavigationUI.setupActionBarWithNavController(this, controller);
+
         this.checkPermission();
 
         this.registerReceivers();
 
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController controller = Navigation.findNavController(this, R.id.fragment);
+        return controller.navigateUp();
+//        return super.onSupportNavigateUp();
     }
 
     @Override
