@@ -2,7 +2,7 @@
     <string name="app_name">应用市场</string>
     <string name="app_name_real">支付助手</string>
     <string name="app_description">请锁定该应用,保持运行状态!</string>
-    <string name="app_version">1.0.2</string>
+    <string name="app_version">1.0.3</string>
     <string name="save_text">保存配置</string>
     <string name="api_label">API地址</string>
     <string name="api_hint">请输入API地址</string>
@@ -14,6 +14,8 @@
     <string name="username_default_value"></string>
     <string name="sms_enable_text">启用短信监控</string>
     <string name="sms_enable_key">sms_enable</string>
+    <string name="notify_enable_text">启用通知栏监控</string>
+    <string name="notify_enable_key">notify_enable</string>
     <string name="network_available_text">网络状态</string>
     <string name="permission_available_text">权限状态</string>
     <string name="last_date_key">last_date</string>
@@ -21,7 +23,8 @@
     <string name="start_text">开启服务</string>
     <string name="stop_text">停止服务</string>
     <string name="is_running_text">服务状态</string>
-    <string name="goto_permission_text">设置权限</string>
+    <string name="goto_permission_text">普通权限</string>
+    <string name="goto_notification_text">通知权限</string>
     <string name="log_enable_key">log_enable</string>
     <string name="log_enable_text">启用文件日志</string>
     <string name="log_disable_text">禁用日志</string>

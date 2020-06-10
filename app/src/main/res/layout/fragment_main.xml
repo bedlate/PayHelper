@@ -107,30 +107,39 @@
                 android:id="@+id/btnSaveConfig"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/save_text"
                 app:layout_constraintEnd_toStartOf="@+id/guideline23"
                 app:layout_constraintStart_toStartOf="@+id/guideline19"
-                app:layout_constraintTop_toBottomOf="@+id/switchSmsStatus" />
+                app:layout_constraintTop_toBottomOf="@+id/switchNotifyStatus" />
 
             <Button
                 android:id="@+id/btnGotoPermission"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/goto_permission_text"
-                app:layout_constraintEnd_toStartOf="@+id/guideline20"
-                app:layout_constraintStart_toStartOf="@+id/guideline24"
-                app:layout_constraintTop_toTopOf="@+id/btnSaveConfig" />
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline19"
+                app:layout_constraintTop_toBottomOf="@+id/btnSaveConfig" />
+
+            <Button
+                android:id="@+id/btnGotoNotification"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/goto_notification_text"
+                app:layout_constraintEnd_toStartOf="@+id/guideline5"
+                app:layout_constraintStart_toStartOf="@+id/guideline3"
+                app:layout_constraintTop_toTopOf="@+id/btnGotoPermission" />
 
             <Button
                 android:id="@+id/btnToggleService"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:text="@{config.isRunning ? @string/stop_text : @string/start_text}"
-                app:layout_constraintEnd_toStartOf="@+id/guideline23"
-                app:layout_constraintStart_toStartOf="@+id/guideline19"
-                app:layout_constraintTop_toBottomOf="@+id/btnSaveConfig" />
+                app:layout_constraintEnd_toStartOf="@+id/guideline20"
+                app:layout_constraintStart_toStartOf="@+id/guideline24"
+                app:layout_constraintTop_toTopOf="@+id/btnSaveConfig" />
 
             <Button
                 android:id="@+id/btnGotoLog"
@@ -138,8 +147,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/log_view_text"
                 app:layout_constraintEnd_toStartOf="@+id/guideline20"
-                app:layout_constraintStart_toStartOf="@+id/guideline24"
-                app:layout_constraintTop_toTopOf="@+id/btnToggleService" />
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toTopOf="@+id/btnGotoNotification" />
 
             <Switch
                 android:id="@+id/switch9"
@@ -200,12 +209,49 @@
                 android:id="@+id/switchSmsStatus"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:checked="@{config.smsEnable}"
                 android:text="@string/sms_enable_text"
                 app:layout_constraintEnd_toStartOf="@+id/guideline20"
                 app:layout_constraintStart_toStartOf="@+id/guideline19"
                 app:layout_constraintTop_toBottomOf="@+id/switchLogStatus" />
+
+            <Switch
+                android:id="@+id/switchNotifyStatus"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:checked="@{config.notifyEnable}"
+                android:text="@string/notify_enable_text"
+                app:layout_constraintEnd_toStartOf="@+id/guideline20"
+                app:layout_constraintStart_toStartOf="@+id/guideline19"
+                app:layout_constraintTop_toBottomOf="@+id/switchSmsStatus" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.3066" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.3266" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.6733" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.6533" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </layout>

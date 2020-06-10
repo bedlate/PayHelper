@@ -22,6 +22,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.payhelper.BuildConfig;
+import com.example.payhelper.MainActivity;
 import com.example.payhelper.R;
 import com.example.payhelper.databinding.FragmentMainBinding;
 import com.example.payhelper.util.HttpUtil;
@@ -85,6 +86,7 @@ public class MainFragment extends Fragment {
         binding.btnSaveConfig.setOnClickListener(onSaveConfig);
         binding.btnToggleService.setOnClickListener(onToggleService);
         binding.btnGotoPermission.setOnClickListener(onGotoPermission);
+        binding.btnGotoNotification.setOnClickListener(onGotoNotification);
         binding.btnGotoLog.setOnClickListener(onGotoLog);
         binding.textVersion.setOnClickListener(onCheckUpdate);
     }
@@ -183,6 +185,15 @@ public class MainFragment extends Fragment {
         }
     };
 
+    // 设置通知栏权限
+    private View.OnClickListener onGotoNotification = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ((MainActivity)getActivity()).gotoNotificationAccessSetting();
+//            PermissionUtil.getInstance(application).gotoPermission();
+        }
+    };
+
     // 切换服务状态
     private View.OnClickListener onToggleService = new View.OnClickListener() {
         @Override
@@ -209,6 +220,7 @@ public class MainFragment extends Fragment {
                 jsonObject.put(getString(R.string.username_key), binding.inputUsername.getText().toString());
                 jsonObject.put(getString(R.string.log_enable_key), binding.switchLogStatus.isChecked());
                 jsonObject.put(getString(R.string.sms_enable_key), binding.switchSmsStatus.isChecked());
+                jsonObject.put(getString(R.string.notify_enable_key), binding.switchNotifyStatus.isChecked());
 
                 configModel.saveConfig(jsonObject);
 
@@ -217,7 +229,8 @@ public class MainFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            hiddenInput();
+            ((MainActivity)getActivity()).hiddenInput();
+//            hiddenInput();
 
             Toast.makeText(getContext(), "保存成功", Toast.LENGTH_SHORT).show();
         }

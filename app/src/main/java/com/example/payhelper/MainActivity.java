@@ -1,15 +1,20 @@
 package com.example.payhelper;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -87,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     // 隐藏输入法
-    private void hiddenInput() {
+    public void hiddenInput() {
         View view = getCurrentFocus();
         if(null != view && null != view.getWindowToken()){
 
@@ -119,10 +124,43 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private void checkPermission() {
         boolean hasPermissions = EasyPermissions.hasPermissions(this, PERMISSIONS);
         configModel.getPermissionAvailable().setValue(hasPermissions);
-        logUtil.d("检查权限状态=" + String.valueOf(hasPermissions));
+        logUtil.d("检查权限状态:" + String.valueOf(hasPermissions));
 
         if (!hasPermissions) {
             EasyPermissions.requestPermissions(this, "权限不足,前往设置", PERMISSION_CODE, PERMISSIONS);
+        } else if (!isNotificationServiceEnable()) {
+            gotoNotificationAccessSetting();
+        }
+    }
+
+    // 是否授权启用通知栏
+    private boolean isNotificationServiceEnable() {
+        return NotificationManagerCompat.getEnabledListenerPackages(this).contains(getPackageName());
+    }
+
+    // 前往通知栏授权配置，授权后自动启动服务，无需手动启用服务
+    public void gotoNotificationAccessSetting() {
+        try {
+            Intent intent;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+                intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+            } else {
+                intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {//普通情况下找不到的时候需要再特殊处理找一次
+            try {
+                Intent intent = new Intent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.Settings$NotificationAccessSettingsActivity");
+                intent.setComponent(cn);
+                intent.putExtra(":settings:show_fragment", "NotificationAccessSettings");
+                startActivity(intent);
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
         }
     }
 

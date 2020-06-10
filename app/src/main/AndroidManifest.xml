@@ -18,6 +18,15 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <service
+            android:name=".service.NotifyService"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
+        <service
             android:name=".service.DaemonService"
             android:enabled="true"
             android:exported="false" />
